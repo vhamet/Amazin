@@ -1,5 +1,106 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px; /* Set the fixed height of the footer here */
+  line-height: 60px; /* Vertically center the text there */
+  border-top: 1px solid #ccc;
+  margin-top:15px;
+}
+
+.container-fluid {
+   padding: 0px;
+}
+
+.loginContainer {
+  max-width: 450px;
+}
+.loginContainer button{
+  width: 100%;
+}
+
+.form-check {
+  margin-top: 15px;
+}
+
+.popover {
+  min-width: 450px;
+}
+
+.helpContainer {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+}
+
+.title {
+  margin-top: 25px;
+  margin-bottom: 20px;
+}
+
+#help {
+  padding-left: 8px;
+}
+
+.loginForm {
+  width: 100%;
+  border:1px solid #ccc;
+  padding: 15px;
+}
+
+[data-toggle="collapse"] .fa:before {
+  margin:1px;
+  content: "\f13a";
+}
+
+[data-toggle="collapse"].collapsed .fa:before {
+  margin:1px;
+  content: "\f138";
+}
+
+.divider {
+	width:100%;
+	text-align:center;
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.divider hr {
+	margin-left:auto;
+	margin-right:auto;
+	width:30%;
+}
+
+#usernameContainer {
+  margin-bottom: 15px;
+}
+
+.hr-left {
+	float:left;
+}
+
+.hr-right {
+	float:right;
+}
+
+#dropdown-menu-user {
+  min-width: 280px;
+}
+
+.jumbotron {
+  margin-bottom:0;
 }
