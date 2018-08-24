@@ -1,0 +1,19 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+.container-fluid {
+   padding: 0px;
+}
+
+.jumbotron {
+  margin-bottom:0;
+}

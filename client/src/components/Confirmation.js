@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch';
-import { confirmationStatus } from './const';
+import { confirmationStatus } from '../utils/const';
 
 class Confirmation extends Component {
   constructor() {

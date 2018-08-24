@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import 'whatwg-fetch';
 import { Button, Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import 'whatwg-fetch';
+import '../style/signin.css';
 
-class LoginForm extends Component {
+class Signin extends Component {
   constructor() {
     super();
     this.state = {
@@ -10,7 +11,8 @@ class LoginForm extends Component {
       password: '',
       validUsername: false,
       errorMessage: '',
-      popoverOpen: false
+      popoverOpen: false,
+      toVerify: false
     };
     this.onChangeText = this.onChangeText.bind(this);
     this.handleSubmitUsername = this.handleSubmitUsername.bind(this);
@@ -42,20 +44,22 @@ class LoginForm extends Component {
   }
 
   changeUsername() {
-    this.setState({ validUsername: false });
+    this.setState({ validUsername: false, errorMessage: '' });
   }
 
   handleSubmitPassword = (e) => {
     e.preventDefault();
     this.setState({ errorMessage: '' });
     var { username, password } = this.state;
-    fetch('/authentification/login', {
+    fetch('/authentification/signin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })})
     .then(res => res.json()).then((res) => {
       if (res.success)
-        this.props.handleLoggedIn();
+        this.props.handleSignedIn();
+      else if (res.toVerify)
+        this.setState({ toVerify: true, errorMessage: res.message });
       else
         this.setState({ errorMessage: res.message });
     });
@@ -72,7 +76,7 @@ class LoginForm extends Component {
     if (!this.state.validUsername) {
       content = (
         <div>
-          <form name="loginForm">
+          <form>
             <div className="form-group">
               <label htmlFor="username">Username or email address</label>
               <input id="username" className="form-control" name="username" type="text" required value={this.state.username} onChange={this.onChangeText}/>
@@ -93,12 +97,12 @@ class LoginForm extends Component {
     }
     else {
       content = (
-        <form name="loginForm">
+        <form>
           <div id="usernameContainer">
             <label>{this.state.username}</label>&nbsp;<a href="#" onClick={this.changeUsername}>Change</a>
           </div>
           <div className="form-group">
-            <div><label className="float-left" htmlFor="passwordLogin">Password</label><a className="float-right" href="">Forgot your password ?</a></div>
+            <div><label className="float-left" htmlFor="password">Password</label><a className="float-right" href="">Forgot your password ?</a></div>
             <input id="password" className="form-control" name="password" type="password" required onChange={this.onChangeText} />
           </div>
           <button type="submit" className="btn btn-primary" disabled={!this.state.password} onClick={this.handleSubmitPassword}>Sign in</button>
@@ -118,7 +122,7 @@ class LoginForm extends Component {
     }
 
     return (
-      <div className="container loginContainer">
+      <div className="container">
         <div className="text-center">
           <a href="/" className="navbar-brand">Amazin</a>
         </div>
@@ -126,8 +130,11 @@ class LoginForm extends Component {
           <div class="alert alert-danger" role="alert">
             <h5><i className="fa fa-exclamation-triangle"></i>&nbsp;There was a problem</h5>
             {this.state.errorMessage}
+            {this.state.toVerify && (
+              <p><br/>If you did not receive any confirmation email, please check your spams or try <a href="#" onClick={this.props.handleSwitchToResend}>resending confirmation</a>.</p>
+            )}
           </div>)}
-        <div className="loginForm rounded">
+        <div id="signinContainer" className="rounded">
           <div className="title"><h3>Sign in </h3></div>
           {content}
         </div>
@@ -135,11 +142,11 @@ class LoginForm extends Component {
           <hr className="hr-left"/>New to Amazin ?<hr className="hr-right" />
         </div>
         <div>
-          <button className="btn" onClick={this.props.handleSwitchToSignup}>Create your Amazin account</button>
+          <button id="switchBtn" className="btn" onClick={this.props.handleSwitchToSignup}>Create your Amazin account</button>
         </div>
       </div>
     );
   }
 }
 
-export default LoginForm;
+export default Signin;

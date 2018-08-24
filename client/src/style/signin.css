@@ -1,33 +1,16 @@
-html {
-  position: relative;
-  min-height: 100%;
+.alert-danger{
+  border-color: #721c24;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  margin-bottom: 60px; /* Margin bottom by footer height */
+#switchBtn:hover {
+    background-color: #bbb;
 }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 60px; /* Set the fixed height of the footer here */
-  line-height: 60px; /* Vertically center the text there */
-  border-top: 1px solid #ccc;
-  margin-top:15px;
-}
-
-.container-fluid {
-   padding: 0px;
-}
-
-.loginContainer {
+.container {
   max-width: 450px;
 }
-.loginContainer button{
+
+.container button{
   width: 100%;
 }
 
@@ -54,7 +37,7 @@ body {
   padding-left: 8px;
 }
 
-.loginForm {
+#signinContainer {
   width: 100%;
   border:1px solid #ccc;
   padding: 15px;
@@ -99,8 +82,4 @@ body {
 
 #dropdown-menu-user {
   min-width: 280px;
-}
-
-.jumbotron {
-  margin-bottom:0;
 }

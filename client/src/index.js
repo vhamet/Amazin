@@ -1,11 +1,11 @@
 // index.js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import Page from './Page';
-import Confirmation from './Confirmation';
-import NotFound from './NotFound';
-import registerServiceWorker from './registerServiceWorker';
+import './style/index.css';
+import Page from './components/Page';
+import Confirmation from './components/Confirmation';
+import NotFound from './components/NotFound';
+import registerServiceWorker from './utils/registerServiceWorker';
 
 var path = window.location.pathname;
 var parts = path.substring(1).split('/');

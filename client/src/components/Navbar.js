@@ -33,7 +33,7 @@ class Navbar extends Component {
               </a>
               <div id="dropdown-menu-user" className="dropdown-menu dropdown-menu-right text-center" aria-labelledby="navbarUserMenu">
                 <div><button className="btn btn-primary border border-left-0" type="button" onClick={this.props.handleClickSignin}>Sign in</button></div>
-                <span className="dropdown-item-text">New customer ? <a href="#">Start here</a></span>
+                <span className="dropdown-item-text">New customer ? <a href="#" onClick={this.props.handleClickSignup}>Start here</a></span>
               </div>
             </li>
             <li className="nav-item dropdown">

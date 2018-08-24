@@ -10,7 +10,6 @@ var nodemailer = require('nodemailer');
 var crypto = require('crypto');
 import User from './models/user';
 import Token from './models/token';
-import { confirmationStatus } from './const';
 
 module.exports = function(app, router) {
   app.use(cookieParser());
@@ -33,50 +32,58 @@ module.exports = function(app, router) {
       return res.json({ success: true, logged: false });
   });
 
+  function handleError(err) {
+    return res.json({ success: false, message: 'An error occured while creating your account, please try again later.' });
+  }
+
   function sendToken(res, user) {
     var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') });
     token.save(function (err) {
       if (err)
-        return res.status(500).send({ msg: err.message });
+        return handleError(err);
 
       var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: 'devtesting.emailaddress@gmail.com', pass: getSecret('pwdGMail')}});
       var mailOptions = { from: 'no-reply@merncommentbox.com', to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/localhost:3000\/confirmation\/' + token.token + '.\n' };
       transporter.sendMail(mailOptions, function (err) {
         if (err)
-          return res.json({ success: false, message: err.message });
-        return res.json({ message: 'A verification email has been sent to ' + user.email + '.' });
+          return handleError(err);
+
+        return res.json({ success: true });
       });
     });
   }
 
-  function saveUser(res, firstname, lastname, email, hash) {
+  function saveUser(res, username, email, hash) {
     const user = new User();
-    user.firstname = firstname;
-    user.lastname = lastname;
+    user.username = username;
     user.email = email;
     user.password = hash;
     user.save(err => {
       if (err)
-        return res.json({ success: false, message: 'An error occured while saving your account, please try again later.' });
+        return handleError(err);
 
-      sendToken(res, user);
+      return sendToken(res, user);
     });
   }
 
   router.post('/signup', (req, res) => {
-    User.find({email:req.body.email}, function(err,users) {
-      if (err)  return res.json({ success: false, message: 'Error db: ' + err });
-      else if (users.length) return res.json({ success: false, message: 'Email already used. Please use another or Log in' });
-      else {
-        bcrypt.hash(req.body.password, 10, function(err, hash) {
-          if (err)
-            return res.json({ success: false, message: 'An error occured while creating your account, please try again later.' });
-          else {
-            const { firstname, lastname, email } = req.body;
-            return saveUser(res, firstname, lastname, email, hash);
-          }
-        });
+    User.findOne({$or: [{username:req.body.username},{email:req.body.email}]}, function(err,user) {
+      if (err)
+        return handleError(err);
+
+      if (user) {
+        if (user.username === req.body.username)
+          return res.json({ success: false, message: 'Email already used. Please use another or sign in' });
+        return res.json({ success: false, message: 'Username already used. Please chose another one' });
       }
+
+      bcrypt.hash(req.body.password, 10, function(err, hash) {
+        if (err)
+          return handleError(err);
+
+        const { username, email } = req.body;
+        return saveUser(res, username, email, hash);
+      });
     });
   });
 
@@ -99,7 +106,7 @@ module.exports = function(app, router) {
           if (err)
             return res.json({ status: confirmationStatus.error, message: err.message });
 
-          return res.json({  status: confirmationStatus.success, message: 'The account has been verified. Please log in.' });
+          return res.json({  status: confirmationStatus.success, message: 'The account has been verified. Please sign in.' });
         });
       });
     });
@@ -108,10 +115,10 @@ module.exports = function(app, router) {
   router.post('/resend', (req, res) => {
     User.findOne({ email: req.body.email }, function (err, user) {
       if (!user)
-        return res.json({  success: false,  message: 'We were unable to find a user with that email.' });
+        return res.json({ success: false, message: 'We were unable to find a user with that email.' });
 
       if (user.isVerified)
-        return res.json({  success: true,  message: 'This account has already been verified. Please log in.' });
+        return res.json({ success: false, message: 'This account has already been verified. Please sign in.' });
 
       sendToken(res, user);
     });
@@ -120,19 +127,28 @@ module.exports = function(app, router) {
   router.post('/user-exists', (req, res) => {
     User.findOne({$or: [{ email: req.body.username }, { username: req.body.username }]}, function(err, user) {
       if (err)
-        return res.json({  success: false,  message: 'An error occured while trying to log in. Please try again later.' });
+        return res.json({ success: false, message: 'An error occured while trying to log in. Please try again later.' });
 
       if (!user)
-        return res.json({  success: false,  message: 'We were unable to find a user with that email or username.' });
+        return res.json({ success: false, message: 'We were unable to find a user with that email or username.' });
 
-      return res.json({  success: true });
+      return res.json({ success: true });
     });
   });
 
-  router.post('/login', (req, res) => {
-    User.findOne({$or: [{ email: req.body.username }, { username: req.body.username }]}, function(err, user) {
-      if (!user)
-        return res.json({ success: false, message: 'An error occured while trying to log in. Please try again later.'});
+  router.post('/available', (req, res) => {
+    User.findOne({ [req.body.field]: req.body.value }, function(err, user) {
+      if (err)
+        return res.json({ success: false });
+
+      return res.json({ success: true, available: !user });
+    });
+  });
+
+  router.post('/signin', (req, res) => {
+    User.findOne({$or: [{ email: req.body.email }, { username: req.body.username }]}, function(err, user) {
+      if (err)
+        return handleError(err);
 
       bcrypt.compare(req.body.password, user.password, function(err, match) {
         if (!match)
@@ -140,7 +156,7 @@ module.exports = function(app, router) {
 
         // Make sure the user has been verified
         if (!user.isVerified)
-          return res.json({ success: false, message: 'Your account has not been verified.' });
+          return res.json({ success: false, toVerify: true, message: 'Your account has not been verified.' });
 
         req.session.user = user;
         res.json({ success: true });

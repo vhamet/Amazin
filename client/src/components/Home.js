@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import LoginForm from './LoginForm';
-import SignupForm from './SignupForm';
+import Signin from './Signin';
+import Signup from './Signup';
 import 'whatwg-fetch';
 var emailValidator = require('email-validator');
 
@@ -96,14 +96,14 @@ class Home extends Component {
         return (
           <div className="container">
             <div>
-              <LoginForm
+              <Signin
                 handleSubmit={this.submitLogin}
                 handleChangeText={this.onChangeText}
                 passwordLogin={this.state.passwordLogin}
                 username={this.state.username} />
             </div>
             <div>
-              <SignupForm
+              <Signup
                 handleSubmit={this.submitSignup}
                 handleChangeText={this.onChangeText}
                 firstname={this.state.firstname}

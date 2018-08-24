@@ -17,8 +17,9 @@
     "nodemailer": "^4.6.8",
     "nodemon": "^1.18.3",
     "prop-types": "^15.6.2",
+    "react-debounce-input": "^3.2.0",
     "react-markdown": "^3.4.1",
-    "react-password-mask": "^3.3.1",
+    "react-native-hide-show-password-input": "^1.0.7",
     "reactstrap": "^6.4.0",
     "whatwg-fetch": "^2.0.4"
   },
