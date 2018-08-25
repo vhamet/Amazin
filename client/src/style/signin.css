@@ -2,16 +2,11 @@
   border-color: #721c24;
 }
 
+#switchBtn {
+  background-color: #ddd;
+}
 #switchBtn:hover {
     background-color: #bbb;
-}
-
-.container {
-  max-width: 450px;
-}
-
-.container button{
-  width: 100%;
 }
 
 .form-check {

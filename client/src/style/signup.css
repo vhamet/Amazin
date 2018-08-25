@@ -2,14 +2,6 @@
   border-color: #721c24;
 }
 
-.container {
-  max-width: 450px;
-}
-
-.container button{
-  width: 100%;
-}
-
 #signupContainer {
   width: 100%;
   border:1px solid #ccc;

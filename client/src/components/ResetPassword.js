@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import { validateEmail } from '../utils';
 import 'whatwg-fetch';
-import '../style/resend.css';
+import '../style/resetPassword.css';
 
-class Resend extends Component {
+class ResetPassword extends Component {
   constructor() {
     super();
     this.state = {
@@ -23,7 +23,7 @@ class Resend extends Component {
     this.setState({ working: true, errorMessage: '' });
     if (this.state.email) {
       var email = this.state.email;
-      fetch('/authentification/resend', {
+      fetch('/authentification/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })})
@@ -56,7 +56,7 @@ class Resend extends Component {
       var errorEmail = this.state.email && !this.state.emailValid ? 'Email invalid' : '';
       content = (
         <div>
-          <p>If you want to verify your new account, please enter your email address below and click <i>Send</i>. An email with further instructions will be sent to you.</p>
+          <p>If you forgot your password, please enter your email address below and click <i>Send</i>. An email with further instructions will be sent to you.</p>
           <form>
             <div className="form-group">
               <label htmlFor="username">Email address</label>
@@ -79,8 +79,8 @@ class Resend extends Component {
             <h5><i className="fa fa-exclamation-triangle"></i>&nbsp;There was a problem</h5>
             {this.state.errorMessage}
           </div>)}
-        <div id="resendContainer" className="rounded">
-          <div className="title"><h3>Resend confirmation mail </h3></div>
+        <div id="resetPasswordContainer" className="rounded">
+          <div className="title"><h3>Reset password</h3></div>
             {content}
         </div>
       </div>
@@ -88,4 +88,4 @@ class Resend extends Component {
   }
 }
 
-export default Resend;
+export default ResetPassword;

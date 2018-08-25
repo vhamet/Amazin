@@ -10,6 +10,7 @@ var nodemailer = require('nodemailer');
 var crypto = require('crypto');
 import User from './models/user';
 import Token from './models/token';
+import { confirmationStatus } from './utils';
 
 module.exports = function(app, router) {
   app.use(cookieParser());
@@ -36,14 +37,35 @@ module.exports = function(app, router) {
     return res.json({ success: false, message: 'An error occured while creating your account, please try again later.' });
   }
 
-  function sendToken(res, user) {
-    var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') });
+  function sendTokenVerification(res, user) {
+    var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex'), type: 'verification' });
     token.save(function (err) {
       if (err)
         return handleError(err);
 
-      var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: 'devtesting.emailaddress@gmail.com', pass: getSecret('pwdGMail')}});
-      var mailOptions = { from: 'no-reply@merncommentbox.com', to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/localhost:3000\/confirmation\/' + token.token + '.\n' };
+      var transporter = nodemailer.createTransport({service: 'SendGrid', auth: {user: 'vhamet', pass: getSecret('pwdSendgrid')}});
+      var mailOptions = { from: 'no-reply@amazin.com', to: user.email, subject: '[Amazin] Account verification',
+                          text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/localhost:3000\/confirmation\/' + token.token + '.\n' };
+      transporter.sendMail(mailOptions, function (err) {
+        if (err)
+          return handleError(err);
+
+        return res.json({ success: true });
+      });
+    });
+  }
+
+  function sendTokenReset(res, user) {
+    var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex'), type: 'reset' });
+    token.save(function (err) {
+      if (err)
+        return handleError(err);
+
+      var transporter = nodemailer.createTransport({service: 'SendGrid', auth: {user: 'vhamet', pass: getSecret('pwdSendgrid')}});
+      var mailOptions = { from: 'no-reply@amazin.com', to: user.email, subject: '[Amazin] Reset password', text: 'You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+          'http:\/\/localhost:3000\/reset-password\/' + token.token + '\n\n' +
+          'If you did not request this, please ignore this email and your password will remain unchanged.\n' };
       transporter.sendMail(mailOptions, function (err) {
         if (err)
           return handleError(err);
@@ -62,7 +84,7 @@ module.exports = function(app, router) {
       if (err)
         return handleError(err);
 
-      return sendToken(res, user);
+      return sendTokenVerification(res, user);
     });
   }
 
@@ -90,7 +112,7 @@ module.exports = function(app, router) {
   router.get('/confirmation/:token', (req, res) => {
     const { token } = req.params;
     // Find a matching token
-    Token.findOne({ token: token }, function (err, token) {
+    Token.findOne({$and:[{ token: token }, {type: 'verification'}]}, function (err, token) {
       if (!token)
         return res.json({ status: confirmationStatus.expired, message: 'We were unable to find a valid token. Your token my have expired.' });
 
@@ -104,9 +126,9 @@ module.exports = function(app, router) {
         user.isVerified = true;
         user.save(function (err) {
           if (err)
-            return res.json({ status: confirmationStatus.error, message: err.message });
+            return handleError(err);
 
-          return res.json({  status: confirmationStatus.success, message: 'The account has been verified. Please sign in.' });
+          return res.json({ status: confirmationStatus.success, message: 'The account has been verified.' });
         });
       });
     });
@@ -120,7 +142,16 @@ module.exports = function(app, router) {
       if (user.isVerified)
         return res.json({ success: false, message: 'This account has already been verified. Please sign in.' });
 
-      sendToken(res, user);
+      sendTokenVerification(res, user);
+    });
+  });
+
+  router.post('/reset-password', (req, res) => {
+    User.findOne({ email: req.body.email }, function (err, user) {
+      if (!user)
+        return res.json({ success: false, message: 'We were unable to find a user with that email.' });
+
+      sendTokenReset(res, user);
     });
   });
 

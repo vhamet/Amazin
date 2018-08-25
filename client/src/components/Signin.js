@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import {  Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { Link } from 'react-router-dom'
 import 'whatwg-fetch';
 import '../style/signin.css';
 
@@ -89,7 +90,7 @@ class Signin extends Component {
               Need help ?
             </a>
             <div id="help" className="collapse">
-              <a href="">Forgot your password ?</a><br />
+              <Link to="/reset-password">Forgot your password ?</Link><br />
               <a href="">Other issues with sign in</a>
             </div>
           </div>
@@ -122,7 +123,7 @@ class Signin extends Component {
     }
 
     return (
-      <div className="container">
+      <div className="container slim-container">
         <div className="text-center">
           <a href="/" className="navbar-brand">Amazin</a>
         </div>
@@ -131,7 +132,7 @@ class Signin extends Component {
             <h5><i className="fa fa-exclamation-triangle"></i>&nbsp;There was a problem</h5>
             {this.state.errorMessage}
             {this.state.toVerify && (
-              <p><br/>If you did not receive any confirmation email, please check your spams or try <a href="#" onClick={this.props.handleSwitchToResend}>resending confirmation</a>.</p>
+              <p><br/>If you did not receive any confirmation email, please check your spams or try <Link to="resend">resending confirmation</Link>.</p>
             )}
           </div>)}
         <div id="signinContainer" className="rounded">
@@ -142,7 +143,7 @@ class Signin extends Component {
           <hr className="hr-left"/>New to Amazin ?<hr className="hr-right" />
         </div>
         <div>
-          <button id="switchBtn" className="btn" onClick={this.props.handleSwitchToSignup}>Create your Amazin account</button>
+          <Link id="switchBtn" className="btn btn-light btn-lnk" to="signup">Create your Amazin account</Link>
         </div>
       </div>
     );

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 
 class Navbar extends Component {
   constructor() {
@@ -32,8 +33,8 @@ class Navbar extends Component {
                 <i className="fas fa-user"></i>
               </a>
               <div id="dropdown-menu-user" className="dropdown-menu dropdown-menu-right text-center" aria-labelledby="navbarUserMenu">
-                <div><button className="btn btn-primary border border-left-0" type="button" onClick={this.props.handleClickSignin}>Sign in</button></div>
-                <span className="dropdown-item-text">New customer ? <a href="#" onClick={this.props.handleClickSignup}>Start here</a></span>
+                <div><Link className="btn btn-primary border border-left-0" to="/Signin">Sign in</Link></div>
+                <span className="dropdown-item-text">New customer ? <Link to="/Signup">Start here</Link></span>
               </div>
             </li>
             <li className="nav-item dropdown">

@@ -14,6 +14,23 @@ body {
    padding: 0px;
 }
 
+.slim-container {
+  max-width: 450px;
+}
+
+.slim-container button{
+  width: 100%;
+}
+
 .jumbotron {
   margin-bottom:0;
+}
+
+.form-group > label {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.btn-lnk {
+  width: 100%;
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {DebounceInput} from 'react-debounce-input';
+import { Link } from 'react-router-dom'
+import { validateEmail } from '../utils';
 import 'whatwg-fetch';
 import '../style/signup.css';
 
@@ -14,7 +15,8 @@ class Signup extends Component {
       errorMessage: '',
       usernameAvailable: true,
       emailAvailable: true,
-      signedUp: false
+      signedUp: false,
+      working: false
     };
     this.onChangeText = this.onChangeText.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -51,6 +53,17 @@ class Signup extends Component {
     return '';
   }
 
+  checkEmail() {
+    if (this.state.email) {
+      if (!validateEmail(this.state.email))
+        return 'Email invalid';
+      if (!this.state.emailAvailable)
+        return 'Email addressed already used';
+    }
+
+    return '';
+  }
+
   checkPassword() {
     if (this.state.password) {
       if (!/[A-Z]/.test(this.state.password))
@@ -69,7 +82,7 @@ class Signup extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    this.setState({ errorMessage: '' });
+    this.setState({ working: true, errorMessage: '' });
     var { username, email, password } = this.state;
     fetch('/authentification/signup', {
       method: 'POST',
@@ -79,35 +92,37 @@ class Signup extends Component {
       if (res.success)
         this.setState({ signedUp: true });
       else
-        this.setState({ errorMessage: res.message });
+        this.setState({ working: false, errorMessage: res.message });
       });
   }
 
   render() {
     if (this.state.signedUp) {
       return (
-        <div className="container">
+        <div className="container slim-container">
           <div className="text-center">
             <a href="/" className="navbar-brand">Amazin</a>
           </div>
           <div id="signupContainer"  className="rounded">
-            <div className="title"><h3>Welcome to Amazin {this.state.username} !</h3></div>
-            <p>A verification email has been sent to <i>{this.state.email}</i>. If you do not receive this email, please check your spams or try
-              <a href="#" onClick={this.props.handleSwitchToResend}>resending it</a>.</p>
+            <div className="title"><h3>Welcome to Amazin, {this.state.username} !</h3></div>
+            <p>A verification email has been sent to <i>{this.state.email}</i>. If you do not receive this email, please check your spams or try <Link to="/resend">resending it</Link>.</p>
           </div>
           <div>
-            <button className="btn btn-primary">Start shopping</button>
+            <Link className="btn btn-primary btn-lnk" to="/">Start shopping</Link>
           </div>
         </div>
       );
     }
 
     var errorUsername = this.checkUsername();
-    var errorEmail = this.state.emailAvailable ? '' : 'Email addressed already used';
+    var errorEmail = this.checkEmail();
     var errorPassword = this.checkPassword();
     var errorConfirmation = this.state.password && this.state.confirmation && this.state.password !== this.state.confirmation ? 'Passwords mismatch. Please check your input' : '';
+    var disabled = this.state.working || !this.state.username || !this.state.email || !this.state.password || !this.state.confirmation
+                  || errorUsername || errorEmail || errorPassword || errorConfirmation;
+
     return (
-      <div className="container">
+      <div className="container slim-container">
         <div className="text-center">
           <a href="/" className="navbar-brand">Amazin</a>
         </div>
@@ -131,21 +146,23 @@ class Signup extends Component {
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input id="password" className={"form-control " + (errorPassword && "invalid")} title={errorPassword} name="password" type="password" required value={this.state.password} onChange={this.onChangeText}/>
+              <input className={"form-control " + (errorPassword && "invalid")} title={errorPassword} name="password" type="password" required
+                    value={this.state.password} onChange={this.onChangeText}/>
             </div>
             <div className="form-group">
               <label htmlFor="confirmation">Re-enter password</label>
-              <input id="confirmation" className={"form-control " + (errorConfirmation && "invalid")}  title={errorConfirmation}  name="confirmation" type="password" required value={this.state.confirmation} onChange={this.onChangeText}/>
+              <input className={"form-control " + (errorConfirmation && "invalid")}  title={errorConfirmation} name="confirmation" type="password" required
+                  value={this.state.confirmation} onChange={this.onChangeText}/>
             </div>
-            <button disabled={!this.state.username || !this.state.email || !this.state.password || !this.state.confirmation || errorUsername || errorEmail || errorPassword || errorConfirmation}
-              type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Create your Amazin account</button>
+            {(this.state.working && <div className="progress progress-btn"><div className="progress-bar progress-bar-striped progress-bar-animated"></div></div>)
+              || <button disabled={disabled} type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Create your Amazin account</button>}
             <div id="conditions">
               <label>By creating an account, you agree to Amazin&apos;s <a href="todo">Conditions of Use</a> and <a href="todo">Privacy Notice</a>.</label>
             </div>
             <div id="switch">
               <div className="gradient-divider-1"></div>
               <div className="gradient-divider-2"></div>
-              <label>Already have an account ? <a href="#" onClick={this.props.handleSwitchToSignin}>Sign in</a></label>
+              <label>Already have an account ? <Link to="/signin">Sign in</Link></label>
             </div>
           </form>
         </div>

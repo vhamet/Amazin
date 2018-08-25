@@ -1,0 +1,19 @@
+.progress-bar {
+  width: 100%;
+}
+
+.alert-danger{
+  border-color: #721c24;
+}
+
+#confirmationContainer {
+  width: 100%;
+  border:1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.title {
+  margin-top: 25px;
+  margin-bottom: 20px;
+}
