@@ -2,21 +2,20 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
 import mongoose from 'mongoose';
-import { getSecret } from './secrets';
+import { getProtectedValue } from './protected';
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bcrypt = require('bcrypt');
-var nodemailer = require('nodemailer');
 var crypto = require('crypto');
 import User from './models/user';
 import Token from './models/token';
-import { confirmationStatus } from './utils';
+import { confirmationStatus, resetStatus, sendMail } from './utils';
 
 module.exports = function(app, router) {
   app.use(cookieParser());
   app.use(session({secret: "Shh, its a secret!"}));
   // db config -- set your URI from mLab in secrets.js
-  mongoose.connect(getSecret('dbUri'), { useNewUrlParser: true });
+  mongoose.connect(getProtectedValue('dbUri'), { useNewUrlParser: true });
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
@@ -37,41 +36,43 @@ module.exports = function(app, router) {
     return res.json({ success: false, message: 'An error occured while creating your account, please try again later.' });
   }
 
+  function deleteTokens(userId, type) {
+    Token.deleteMany({$and:[{ _userId: userId }, {type: type}]}, function (err, results) { });
+  }
+
   function sendTokenVerification(res, user) {
+    deleteTokens(user._id, 'verification');
     var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex'), type: 'verification' });
     token.save(function (err) {
       if (err)
         return handleError(err);
 
-      var transporter = nodemailer.createTransport({service: 'SendGrid', auth: {user: 'vhamet', pass: getSecret('pwdSendgrid')}});
-      var mailOptions = { from: 'no-reply@amazin.com', to: user.email, subject: '[Amazin] Account verification',
-                          text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/localhost:3000\/confirmation\/' + token.token + '.\n' };
-      transporter.sendMail(mailOptions, function (err) {
-        if (err)
-          return handleError(err);
-
-        return res.json({ success: true });
-      });
+      sendMail(user.email, '[Amazin] Account verification','Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/localhost:3000\/confirmation\/' + token.token + '.\n',
+                function (err) {
+                  if (err)
+                    return handleError(err);
+                  return res.json({ success: true });
+                });
     });
   }
 
   function sendTokenReset(res, user) {
+    deleteTokens(user._id, 'reset');
     var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex'), type: 'reset' });
     token.save(function (err) {
       if (err)
         return handleError(err);
 
-      var transporter = nodemailer.createTransport({service: 'SendGrid', auth: {user: 'vhamet', pass: getSecret('pwdSendgrid')}});
-      var mailOptions = { from: 'no-reply@amazin.com', to: user.email, subject: '[Amazin] Reset password', text: 'You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n' +
-          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-          'http:\/\/localhost:3000\/reset-password\/' + token.token + '\n\n' +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n' };
-      transporter.sendMail(mailOptions, function (err) {
-        if (err)
-          return handleError(err);
-
-        return res.json({ success: true });
-      });
+      sendMail(user.email, '[Amazin] Reset password',
+                'You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                'http:\/\/localhost:3000\/reset-password\/' + token.token + '\n\n' +
+                'If you did not request this, please ignore this email and your password will remain unchanged.\n',
+                function (err) {
+                  if (err)
+                    return handleError(err);
+                  return res.json({ success: true });
+                });
     });
   }
 
@@ -146,12 +147,63 @@ module.exports = function(app, router) {
     });
   });
 
-  router.post('/reset-password', (req, res) => {
+  router.post('/send-reset', (req, res) => {
     User.findOne({ email: req.body.email }, function (err, user) {
       if (!user)
         return res.json({ success: false, message: 'We were unable to find a user with that email.' });
 
+      if (!user.isVerified)
+        return res.json({ success: false, notVerified: true, message: 'This account has not been verified yet.' });
+
       sendTokenReset(res, user);
+    });
+  });
+
+  router.get('/reset-password/:token', (req, res) => {
+    const { token } = req.params;
+    // Find a matching token
+    Token.findOne({$and:[{ token: token }, {type: 'reset'}]}, function (err, token) {
+      if (err)
+        return handleError(err);
+      if (!token)
+        return res.json({ status: resetStatus.expired, message: 'We were unable to find a valid token. Your token my have expired.' });
+
+      User.findOne({ _id: token._userId }, function (err, user) {
+        if (!user)
+          return res.json({ status: resetStatus.nouser, message: 'We were unable to find a user for this token.' });
+
+        return res.json({ status: resetStatus.valid });
+      });
+    });
+  });
+
+  router.post('/reset-password', (req, res) => {
+    Token.findOne({$and:[{ token: req.body.token }, {type: 'reset'}]}, function(err, token) {
+      if (err)
+        return handleError(err);
+      if (!token)
+        return res.json({ status: resetStatus.expired, message: 'We were unable to find a valid token. Your token my have expired.' });
+
+      User.findOne({ _id: token._userId }, function (err, user) {
+        if (err)
+          return handleError(err);
+        if (!user)
+          return res.json({ status: resetStatus.nouser, message: 'We were unable to find a user for this token.' });
+
+          bcrypt.hash(req.body.password, 10, function(err, hash) {
+            if (err)
+              return handleError(err);
+
+            user.password = hash,
+            user.save(function (err) {
+              if (err)
+                return handleError(err);
+              Token.deleteOne({ _id: token._id }, function (err, results) { });
+
+              return res.json({ status: resetStatus.success, message: 'Your password has been updated.' });
+            });
+          });
+      });
     });
   });
 
@@ -177,9 +229,12 @@ module.exports = function(app, router) {
   });
 
   router.post('/signin', (req, res) => {
-    User.findOne({$or: [{ email: req.body.email }, { username: req.body.username }]}, function(err, user) {
+    User.findOne({$or: [{ email: req.body.username }, { username: req.body.username }]}, function(err, user) {
       if (err)
         return handleError(err);
+      if (!user)
+        return res.json({ success: false, message: 'We were unable to find a user for this token.' });
+
 
       bcrypt.compare(req.body.password, user.password, function(err, match) {
         if (!match)

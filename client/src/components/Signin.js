@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {  Popover, PopoverHeader, PopoverBody } from 'reactstrap';
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import 'whatwg-fetch';
 import '../style/signin.css';
 
@@ -13,7 +13,8 @@ class Signin extends Component {
       validUsername: false,
       errorMessage: '',
       popoverOpen: false,
-      toVerify: false
+      toVerify: false,
+      signedIn: false
     };
     this.onChangeText = this.onChangeText.bind(this);
     this.handleSubmitUsername = this.handleSubmitUsername.bind(this);
@@ -58,7 +59,7 @@ class Signin extends Component {
       body: JSON.stringify({ username, password })})
     .then(res => res.json()).then((res) => {
       if (res.success)
-        this.props.handleSignedIn();
+        this.setState({ signedIn: true });
       else if (res.toVerify)
         this.setState({ toVerify: true, errorMessage: res.message });
       else
@@ -73,6 +74,9 @@ class Signin extends Component {
   }
 
   render() {
+    if (this.state.signedIn)
+      return <Redirect to='/' />
+
     let content;
     if (!this.state.validUsername) {
       content = (
@@ -90,7 +94,7 @@ class Signin extends Component {
               Need help ?
             </a>
             <div id="help" className="collapse">
-              <Link to="/reset-password">Forgot your password ?</Link><br />
+              <Link to="/send-reset">Forgot your password ?</Link><br />
               <a href="">Other issues with sign in</a>
             </div>
           </div>
@@ -103,7 +107,7 @@ class Signin extends Component {
             <label>{this.state.username}</label>&nbsp;<a href="#" onClick={this.changeUsername}>Change</a>
           </div>
           <div className="form-group">
-            <div><label className="float-left" htmlFor="password">Password</label><a className="float-right" href="">Forgot your password ?</a></div>
+            <label className="float-left" htmlFor="password">Password</label><Link className="float-right" to="/send-reset">Forgot your password ?</Link>
             <input id="password" className="form-control" name="password" type="password" required onChange={this.onChangeText} />
           </div>
           <button type="submit" className="btn btn-primary" disabled={!this.state.password} onClick={this.handleSubmitPassword}>Sign in</button>

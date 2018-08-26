@@ -4,6 +4,7 @@ import Home from './Home'
 import Signin from './Signin'
 import Signup from './Signup'
 import Resend from './Resend'
+import SendReset from './SendReset'
 import ResetPassword from './ResetPassword'
 import Confirmation from './Confirmation'
 import NotFound from './NotFound'
@@ -20,7 +21,8 @@ const Content = () => (
       <Route exact path='/signin' component={Signin}/>
       <Route exact path='/signup' component={Signup}/>
       <Route exact path='/resend' component={Resend}/>
-      <Route path='/reset-password' component={ResetPassword}/>
+      <Route exact path='/send-reset' component={SendReset}/>
+      <Route exact path='/reset-password/:token' component={ResetPassword}/>
       <Route exact path='/confirmation/:token' component={Confirmation}/>
       <Route component={NotFound} />
     </Switch>
