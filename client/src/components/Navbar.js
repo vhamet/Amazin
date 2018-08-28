@@ -5,8 +5,30 @@ class Navbar extends Component {
   constructor() {
     super();
     this.state = {
-      isLogged: false
     };
+  }
+
+  getUserMenu() {
+    let userMenu;
+    if (!this.props.ready)
+      userMenu = (<div>loading</div>);
+    else if (this.props.signedIn) {
+      userMenu = (
+        <div>
+          <div><button className="btn btn-primary border border-left-0" onClick={this.props.handleSignOut}>Sign out</button></div>
+        </div>
+      );
+    }
+    else {
+      userMenu = (
+      <div>
+        <div><Link className="btn btn-primary border border-left-0" to="/Signin">Sign in</Link></div>
+        <span className="dropdown-item-text">New customer ? <Link to="/Signup">Start here</Link></span>
+      </div>
+      );
+    }
+
+    return userMenu;
   }
 
   render() {
@@ -33,8 +55,7 @@ class Navbar extends Component {
                 <i className="fas fa-user"></i>
               </a>
               <div id="dropdown-menu-user" className="dropdown-menu dropdown-menu-right text-center" aria-labelledby="navbarUserMenu">
-                <div><Link className="btn btn-primary border border-left-0" to="/Signin">Sign in</Link></div>
-                <span className="dropdown-item-text">New customer ? <Link to="/Signup">Start here</Link></span>
+                {this.getUserMenu()}
               </div>
             </li>
             <li className="nav-item dropdown">

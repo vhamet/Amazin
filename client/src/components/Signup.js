@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import ReCAPTCHA from "react-google-recaptcha";
 import { validateEmail } from '../utils';
 import 'whatwg-fetch';
 import '../style/signup.css';
@@ -16,10 +17,16 @@ class Signup extends Component {
       usernameAvailable: true,
       emailAvailable: true,
       signedUp: false,
-      working: false
+      working: false,
+      captcha: null
     };
     this.onChangeText = this.onChangeText.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.onChangeRecaptcha = this.onChangeRecaptcha.bind(this);
+  }
+
+  onChangeRecaptcha(value) {
+    this.setState({captcha: value});
   }
 
   checkAvailability(field, value, state) {
@@ -118,7 +125,7 @@ class Signup extends Component {
     var errorEmail = this.checkEmail();
     var errorPassword = this.checkPassword();
     var errorConfirmation = this.state.password && this.state.confirmation && this.state.password !== this.state.confirmation ? 'Passwords mismatch. Please check your input' : '';
-    var disabled = this.state.working || !this.state.username || !this.state.email || !this.state.password || !this.state.confirmation
+    var disabled = this.state.working || !this.state.username || !this.state.email || !this.state.password || !this.state.confirmation || !this.state.captcha
                   || errorUsername || errorEmail || errorPassword || errorConfirmation;
 
     return (
@@ -153,6 +160,9 @@ class Signup extends Component {
               <label htmlFor="confirmation">Re-enter password</label>
               <input className={"form-control " + (errorConfirmation && "invalid")}  title={errorConfirmation} name="confirmation" type="password" required
                   value={this.state.confirmation} onChange={this.onChangeText}/>
+            </div>
+            <div className="text-center recaptcha">
+              <ReCAPTCHA sitekey="6Le-c2wUAAAAABHyXYEZcKuGLtHHQNS2gG8xjLAH" onChange={this.onChangeRecaptcha} />
             </div>
             {(this.state.working && <div className="progress progress-btn"><div className="progress-bar progress-bar-striped progress-bar-animated"></div></div>)
               || <button disabled={disabled} type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Create your Amazin account</button>}

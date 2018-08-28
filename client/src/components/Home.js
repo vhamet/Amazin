@@ -5,7 +5,6 @@ class Home extends Component {
   constructor() {
     super();
     this.state = {
-      isLogged: false
     };
   }
 
@@ -13,7 +12,7 @@ class Home extends Component {
     return (
       <div className="container">
         <Jumbotron />
-        {(this.state.isLogged && <h1>LOGGED</h1>) || <h1>NOT LOGGED</h1> }
+        {(this.props.signedIn && <h1>LOGGED</h1>) || <h1>NOT LOGGED</h1> }
       </div>
     );
   }

@@ -10,14 +10,21 @@ var crypto = require('crypto');
 import User from './models/user';
 import Token from './models/token';
 import { confirmationStatus, resetStatus, sendMail } from './utils';
+const MongoStore = require('connect-mongo')(session);
 
 module.exports = function(app, router) {
-  app.use(cookieParser());
-  app.use(session({secret: "Shh, its a secret!"}));
   // db config -- set your URI from mLab in secrets.js
   mongoose.connect(getProtectedValue('dbUri'), { useNewUrlParser: true });
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+  app.use(cookieParser());
+  app.use(session({
+      secret: 'my-secret',
+      resave: false,
+      saveUninitialized: false,
+      store: new MongoStore({ mongooseConnection: db }),
+  }));
 
   // now we should configure the API to use bodyParser and look for JSON data in the request body
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,10 +33,8 @@ module.exports = function(app, router) {
 
   // now we can set the route path & initialize the API
   router.get('/', (req, res) => {
-    if (req.session.user)
-      return res.json({ success: true, logged: true });
-    else
-      return res.json({ success: true, logged: false });
+    console.log('USER: ' + req.session.user);
+    res.json({ signedIn: typeof(req.session.user) !== "undefined" });
   });
 
   function handleError(err) {
@@ -245,8 +250,21 @@ module.exports = function(app, router) {
           return res.json({ success: false, toVerify: true, message: 'Your account has not been verified.' });
 
         req.session.user = user;
+        if (req.body.keepMeSignedIn)
+          req.session.cookie.expires = false;
+        else
+          req.session.cookie.maxAge = 60 * 60 * 1000;
         res.json({ success: true });
       });
+    });
+  });
+
+  router.get('/signout', (req, res) => {
+    req.session.destroy(function(err) {
+      if (err)
+        return handleError(err);
+
+      return res.json({ success: true });
     });
   });
 

@@ -10,6 +10,7 @@ class Signin extends Component {
     this.state = {
       username: '',
       password: '',
+      keepMeSignedIn: false,
       validUsername: false,
       errorMessage: '',
       popoverOpen: false,
@@ -17,6 +18,7 @@ class Signin extends Component {
       signedIn: false
     };
     this.onChangeText = this.onChangeText.bind(this);
+    this.onChangeCheck = this.onChangeCheck.bind(this);
     this.handleSubmitUsername = this.handleSubmitUsername.bind(this);
     this.handleSubmitPassword = this.handleSubmitPassword.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -25,6 +27,10 @@ class Signin extends Component {
 
   toggle() {
     this.setState({ popoverOpen: !this.state.popoverOpen });
+  }
+
+  onChangeCheck = (e) => {
+    this.setState({ keepMeSignedIn: e.target.checked });
   }
 
   handleSubmitUsername = (e) => {
@@ -52,11 +58,11 @@ class Signin extends Component {
   handleSubmitPassword = (e) => {
     e.preventDefault();
     this.setState({ errorMessage: '' });
-    var { username, password } = this.state;
+    var { username, password, keepMeSignedIn } = this.state;
     fetch('/authentification/signin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })})
+      body: JSON.stringify({ username, password, keepMeSignedIn })})
     .then(res => res.json()).then((res) => {
       if (res.success)
         this.setState({ signedIn: true });
@@ -74,8 +80,13 @@ class Signin extends Component {
   }
 
   render() {
-    if (this.state.signedIn)
-      return <Redirect to='/' />
+    if (this.props.signedIn)
+      return (<Redirect to='/' />);
+
+    if (this.state.signedIn) {
+      this.props.handleSignIn();
+      return (<Redirect to='/' />);
+      }
 
     let content;
     if (!this.state.validUsername) {
@@ -113,7 +124,7 @@ class Signin extends Component {
           <button type="submit" className="btn btn-primary" disabled={!this.state.password} onClick={this.handleSubmitPassword}>Sign in</button>
           <div className="form-group form-check">
             <label className="form-check-label">
-              <input className="form-check-input" type="checkbox" /> Keep me signed in.
+              <input className="form-check-input" type="checkbox" onChange={this.onChangeCheck}/> Keep me signed in.
             </label>&nbsp;
             <a href="#" id="Popover1" onClick={this.toggle}>Details</a>
             <Popover placement="bottom" isOpen={this.state.popoverOpen} target="Popover1" toggle={this.toggle}>

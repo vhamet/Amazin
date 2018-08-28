@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Home from './Home'
 import Signin from './Signin'
@@ -9,24 +9,27 @@ import ResetPassword from './ResetPassword'
 import Confirmation from './Confirmation'
 import NotFound from './NotFound'
 
-// The Main component renders one of the three provided
-// Routes (provided that one matches). Both the /roster
-// and /schedule routes will match any pathname that starts
-// with /roster or /schedule. The / route will only match
-// when the pathname is exactly the string "/"
-const Content = () => (
-  <main>
-    <Switch>
-      <Route exact path='/' component={Home}/>
-      <Route exact path='/signin' component={Signin}/>
-      <Route exact path='/signup' component={Signup}/>
-      <Route exact path='/resend' component={Resend}/>
-      <Route exact path='/send-reset' component={SendReset}/>
-      <Route exact path='/reset-password/:token' component={ResetPassword}/>
-      <Route exact path='/confirmation/:token' component={Confirmation}/>
-      <Route component={NotFound} />
-    </Switch>
-  </main>
-)
+class Content extends Component {
+  constructor() {
+    super();
+  };
+
+  render() {
+    return (
+      <main>
+        <Switch>
+          <Route exact path='/' render={(props) => (<Home {...props} signedIn={this.props.signedIn} />)} />
+          <Route exact path='/signin' render={(props) => (<Signin {...props} signedIn={this.props.signedIn} handleSignIn={this.props.handleSignIn} />)} />
+          <Route exact path='/signup' component={Signup}/>
+          <Route exact path='/resend' component={Resend}/>
+          <Route exact path='/send-reset' component={SendReset}/>
+          <Route exact path='/reset-password/:token' component={ResetPassword}/>
+          <Route exact path='/confirmation/:token' component={Confirmation}/>
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+    );
+  }
+}
 
 export default Content

@@ -29,3 +29,8 @@
   margin-top: 25px;
   margin-bottom: 20px;
 }
+
+.recaptcha > div {
+  display: inline-block;
+  margin-bottom: 10px
+}
