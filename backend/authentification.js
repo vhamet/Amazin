@@ -20,10 +20,12 @@ module.exports = function(app, router) {
 
   app.use(cookieParser());
   app.use(session({
-      secret: 'my-secret',
+      secret: getProtectedValue('sessionSecret'),
       resave: false,
       saveUninitialized: false,
       store: new MongoStore({ mongooseConnection: db }),
+      rolling: true,
+      name: 'ArthurDent'
   }));
 
   // now we should configure the API to use bodyParser and look for JSON data in the request body
@@ -33,7 +35,6 @@ module.exports = function(app, router) {
 
   // now we can set the route path & initialize the API
   router.get('/', (req, res) => {
-    console.log('USER: ' + req.session.user);
     res.json({ signedIn: typeof(req.session.user) !== "undefined" });
   });
 

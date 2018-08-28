@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
-import { validateEmail } from '../utils';
 import 'whatwg-fetch';
 import { resetStatus } from '../utils';
 import '../style/resetPassword.css';

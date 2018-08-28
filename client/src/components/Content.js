@@ -10,9 +10,6 @@ import Confirmation from './Confirmation'
 import NotFound from './NotFound'
 
 class Content extends Component {
-  constructor() {
-    super();
-  };
 
   render() {
     return (

@@ -115,7 +115,7 @@ class Signin extends Component {
       content = (
         <form>
           <div id="usernameContainer">
-            <label>{this.state.username}</label>&nbsp;<a href="#" onClick={this.changeUsername}>Change</a>
+            <label>{this.state.username}</label>&nbsp;<button type="button" className="btn btn-link btn-link-small" onClick={this.changeUsername}>Change</button>
           </div>
           <div className="form-group">
             <label className="float-left" htmlFor="password">Password</label><Link className="float-right" to="/send-reset">Forgot your password ?</Link>
@@ -126,7 +126,7 @@ class Signin extends Component {
             <label className="form-check-label">
               <input className="form-check-input" type="checkbox" onChange={this.onChangeCheck}/> Keep me signed in.
             </label>&nbsp;
-            <a href="#" id="Popover1" onClick={this.toggle}>Details</a>
+            <button type="button" className="btn btn-link btn-link-small" id="Popover1" onClick={this.toggle}>Details</button>
             <Popover placement="bottom" isOpen={this.state.popoverOpen} target="Popover1" toggle={this.toggle}>
               <PopoverHeader><b>"Keep Me Signed In" Checkbox</b><button type="button" className="close" onClick={this.toggle}>&times;</button></PopoverHeader>
               <PopoverBody>

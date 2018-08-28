@@ -31,7 +31,7 @@ class Confirmation extends Component {
       case confirmationStatus.nouser: content = (<div><p>{this.state.message}</p><p>Please <Link to="/signup">sign up</Link>.</p></div>); break;
       case confirmationStatus.verified:
       case confirmationStatus.success: content = (<div><p>{this.state.message}</p><p>Please <Link to="/signin">sign in</Link>.</p></div>); break;
-      case confirmationStatus.error: content = (<div></div>)
+      case confirmationStatus.error: content = (<div></div>); break;
       default: content = (<div className="progress"><div className="progress-bar progress-bar-striped progress-bar-animated"></div></div>); break;
     }
 

@@ -8,6 +8,13 @@ class Home extends Component {
     };
   }
 
+  componentDidMount() {
+    fetch('/authentification', {method: 'GET'})
+    .then(res => res.json()).then((res) => {
+      
+    });
+  }
+
   render() {
     return (
       <div className="container">

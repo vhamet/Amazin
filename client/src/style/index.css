@@ -18,7 +18,7 @@ body {
   max-width: 450px;
 }
 
-.slim-container button{
+.slim-container button:not(.btn-link-small){
   width: 100%;
 }
 
