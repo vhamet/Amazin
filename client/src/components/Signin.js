@@ -38,7 +38,7 @@ class Signin extends Component {
     this.setState({ errorMessage: '' });
     if (this.state.username) {
       var username = this.state.username;
-      fetch('/authentification/user-exists', {
+      fetch('/authentification/check-user-exists', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username })})

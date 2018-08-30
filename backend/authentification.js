@@ -5,7 +5,6 @@ import mongoose from 'mongoose';
 import { getProtectedValue } from './protected';
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
-var bcrypt = require('bcrypt');
 var crypto = require('crypto');
 import User from './models/user';
 import Token from './models/token';
