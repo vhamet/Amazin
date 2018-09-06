@@ -35,7 +35,7 @@ class Signup extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ field, value })})
     .then(res => res.json()).then((res) => {
-        this.setState({[field]: value, [state]: (res.success && res.available) });
+        this.setState({[field]: value, [state]: res.available });
     });
   }
 

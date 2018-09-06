@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
 
-// create new instance of the mongoose.schema. the schema takes an
-// object that shows the shape of your database entries.
+const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
+
 const UserSchema = new Schema({
   username: { type: String, unique: true },
   email: { type: String, unique: true },
@@ -13,7 +12,7 @@ const UserSchema = new Schema({
 
 UserSchema.methods.comparePassword = function comparePassword(candidatePassword) {
   return new Promise((resolve, reject) => {
-    bcrypt.compare(candidatePassword, this.password, function(err, match) {
+    bcrypt.compare(candidatePassword, this.password, (err, match) => {
       if (err)
         reject(err);
 
@@ -22,5 +21,4 @@ UserSchema.methods.comparePassword = function comparePassword(candidatePassword)
   });
 };
 
-// export our module to use in server.js
 export default mongoose.model('User', UserSchema);

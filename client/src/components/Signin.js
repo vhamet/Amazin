@@ -95,7 +95,7 @@ class Signin extends Component {
           <form>
             <div className="form-group">
               <label htmlFor="username">Username or email address</label>
-              <input id="username" className="form-control" name="username" type="text" required value={this.state.username} onChange={this.onChangeText}/>
+              <input id="username" className="form-control" name="username" type="text" autoFocus required value={this.state.username} onChange={this.onChangeText}/>
             </div>
             <button type="submit" className="btn btn-primary" disabled={!this.state.username} onClick={this.handleSubmitUsername}>Continue</button>
           </form>
@@ -119,7 +119,7 @@ class Signin extends Component {
           </div>
           <div className="form-group">
             <label className="float-left" htmlFor="password">Password</label><Link className="float-right" to="/send-reset">Forgot your password ?</Link>
-            <input id="password" className="form-control" name="password" type="password" required onChange={this.onChangeText} />
+            <input id="password" className="form-control" name="password" type="password" required autoFocus onChange={this.onChangeText} />
           </div>
           <button type="submit" className="btn btn-primary" disabled={!this.state.password} onClick={this.handleSubmitPassword}>Sign in</button>
           <div className="form-group form-check">

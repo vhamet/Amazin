@@ -1,7 +1,6 @@
-import express from 'express';
 const authentificationController = require('../controllers/authentification');
 
-module.exports = function(app, router) {
+module.exports = (app, router) => {
   router.get('/', authentificationController.index);
   router.post('/check-user-exists', authentificationController.checkUserExists);
   router.post('/signin', authentificationController.signin);
@@ -15,4 +14,4 @@ module.exports = function(app, router) {
   router.get('/signout', authentificationController.signout);
 
   app.use('/authentification', router);
-}
+};
