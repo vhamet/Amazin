@@ -1,25 +1,25 @@
 import React, { Component } from 'react';
-import Jumbotron from './Jumbotron';
+import Carousel from './Carousel';
+import HorizontalScrolling from './HorizontalScrolling';
 
 class Home extends Component {
   constructor() {
     super();
     this.state = {
+      items: null
     };
   }
 
   componentDidMount() {
-    fetch('/authentification', {method: 'GET'})
-    .then(res => res.json()).then((res) => {
-      
-    });
+
   }
 
   render() {
     return (
-      <div className="container">
-        <Jumbotron />
+      <div className="container-fluid">
+        <Carousel />
         {(this.props.signedIn && <h1>LOGGED</h1>) || <h1>NOT LOGGED</h1> }
+        <HorizontalScrolling items={this.state.items}/>
       </div>
     );
   }

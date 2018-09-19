@@ -1,0 +1,16 @@
+.item-box {
+  margin: 2px;
+  min-width: 200px;
+}
+
+.empty {
+  background-color: #ddd;
+}
+
+.aTitle {
+  width: 100%;
+}
+
+.price {
+  width: 50px;
+}

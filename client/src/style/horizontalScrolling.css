@@ -1,0 +1,8 @@
+.container-horizontal-scrolling {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.card-body {
+  min-width: 200px;
+}

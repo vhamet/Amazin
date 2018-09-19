@@ -82,17 +82,16 @@ async function sendTokenVerification(user) {
   const token = await authentificationService.createToken(user._id, 'verification');
   await utils.sendMail(
     user.email,
-    '[Amazin] Reset password',
-    `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
-    Please click on the following link, or paste this into your browser to complete the process:\n\n
-    http://localhost:3000/reset-password/${token.token} \n\n
-    If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    '[Amazin] Account verification',
+    `Welcome to Amazin !\n\n
+    Please complete your subscription by clicking the following link or pasting it into your browser :\n\n
+    http://localhost:3000/confirmation/${token.token} \n`,
   );
 }
 
 async function confirmation(req, res) {
   try {
-    const { _token } = req.params;
+    const _token = req.params.token;
     const token = await authentificationService.getToken({ $and: [{ token: _token }, { type: 'verification' }] });
     if (!token)
       return res.json({ status: utils.confirmationStatus.expired, message: 'We were unable to find a valid token. Your token my have expired.' });
@@ -142,9 +141,9 @@ async function sendReset(req, res) {
       user.email,
       '[Amazin] Reset password',
       `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
-      'Please click on the following link, or paste this into your browser to complete the process:\n\n
-      'http://localhost:3000/reset-password/${token.token}\n\n
-      'If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+      Please click on the following link, or paste this into your browser to complete the process:\n\n
+      http://localhost:3000/reset-password/${token.token}\n\n
+      If you did not request this, please ignore this email and your password will remain unchanged.\n`,
     );
 
     res.json({ success: true });
@@ -155,7 +154,7 @@ async function sendReset(req, res) {
 
 async function gResetPassword(req, res) {
   try {
-    const { _token } = req.params;
+    const _token = req.params.token;
     const token = await authentificationService.getToken({ $and: [{ token: _token }, { type: 'reset' }] });
     if (!token)
       return res.json({ status: utils.resetStatus.expired, message: 'We were unable to find a valid token. Your token my have expired.' });
@@ -180,7 +179,7 @@ async function pResetPassword(req, res) {
     if (!user)
       return res.json({ status: utils.resetStatus.nouser, message: 'We were unable to find a user for this token.' });
 
-    const hash = await utils.hashPassword(req.body.hashPassword);
+    const hash = await utils.hashPassword(req.body.password);
     user.password = hash;
     await authentificationService.updateUser(user);
     authentificationService.deleteToken({ id: token._id }).catch(err => console.log(err));
