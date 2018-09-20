@@ -1,6 +1,46 @@
 .item-box {
-  margin: 2px;
+  margin: 2px 7px 60px;
   min-width: 200px;
+  max-width: 200px;
+}
+
+.item-box-hovered {
+  min-width: 215px;
+}
+
+.divName {
+  margin-top: 10px;
+  font-weight: bold;
+  white-space: pre-wrap;
+  font-size: 14px;
+  min-height: 85px;
+}
+
+.divName > a {
+  text-decoration: none;
+  color: black;
+}
+
+.divPrice {
+  font-weight: bold;
+  font-size: 22px;
+  margin-top: 5px;
+}
+
+.divCart > button {
+  width: 100%;
+}
+
+.divImg > img {
+  width: 80%;
+}
+
+.divImgEmpty  {
+  min-height: 150px;
+}
+
+.divImgEmpty > img {
+  width: auto;
 }
 
 .empty {

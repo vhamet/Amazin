@@ -3,6 +3,17 @@
   white-space: nowrap;
 }
 
-.card-body {
-  min-width: 200px;
+.container-horizontal {
+  width: 90%;
+  margin-bottom: 30px;
+  background-color: #fff;
+}
+
+.horizontal-scrolling-title {
+  margin: 50px 25px 10px;
+}
+
+.horizontal-scrolling-title > label {
+  font-size: 30px;
+  font-weight: 1000;
 }

@@ -15,7 +15,7 @@ class Content extends Component {
     return (
       <main>
         <Switch>
-          <Route exact path='/' render={(props) => (<Home {...props} signedIn={this.props.signedIn} />)} />
+          <Route exact path='/' render={(props) => (<Home {...props} signedIn={this.props.signedIn} handleAddToCart={this.props.handleAddToCart}/>)} />
           <Route exact path='/signin' render={(props) => (<Signin {...props} signedIn={this.props.signedIn} handleSignIn={this.props.handleSignIn} />)} />
           <Route exact path='/signup' component={Signup}/>
           <Route exact path='/resend' component={Resend}/>

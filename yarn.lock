@@ -3894,6 +3894,10 @@ mongoose-legacy-pluralize@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
 
+mongoose-simple-random@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/mongoose-simple-random/-/mongoose-simple-random-0.4.1.tgz#09054d8555826730209a7405b1d73cb4a8f91aa3"
+
 mongoose@^5.2.9:
   version "5.2.9"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.2.9.tgz#1b4a01de776504193ecdeda87c0c7d1962c2d632"

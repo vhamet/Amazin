@@ -13,6 +13,7 @@ class Page extends Component {
     };
     this.signOut = this.signOut.bind(this);
     this.signIn = this.signIn.bind(this);
+    this.addToCart = this.addToCart.bind(this);
   }
 
   componentDidMount() {
@@ -39,12 +40,16 @@ class Page extends Component {
     this.setState({ signedIn: true });
   }
 
+  addToCart(itemId) {
+    alert('added');
+  }
+
   render() {
     return (
       <div>
         <Navbar ready={this.state.ready} signedIn={this.state.signedIn} handleSignOut={this.signOut}/>
         <div className="content-container">
-          <Content signedIn={this.state.signedIn} handleSignIn={this.signIn}/>
+          <Content signedIn={this.state.signedIn} handleSignIn={this.signIn} handleAddToCart={this.addToCart}/>
         </div>
         <Footer />
       </div>
