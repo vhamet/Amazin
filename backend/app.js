@@ -7,8 +7,10 @@ import { protectedValue } from './protected';
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session);
+
 const authentificationRoutes = require('./routes/authentification');
 const itemsRoutes = require('./routes/items');
+const cartRoutes = require('./routes/cart');
 
 const app = express();
 const router = express.Router();
@@ -37,6 +39,7 @@ if (app.settings.env !== 'test') {
 app.use('/', router);
 authentificationRoutes(app, router);
 itemsRoutes(app, router);
+cartRoutes(app, router);
 
 process.on('SIGINT', () => {
   db.close(() => {

@@ -86,7 +86,7 @@ class Signin extends Component {
     if (this.state.signedIn) {
       this.props.handleSignIn();
       return (<Redirect to='/' />);
-      }
+    }
 
     let content;
     if (!this.state.validUsername) {

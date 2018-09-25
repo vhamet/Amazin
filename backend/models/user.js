@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
 
 const UserSchema = new Schema({
@@ -19,6 +19,10 @@ UserSchema.methods.comparePassword = function comparePassword(candidatePassword)
       resolve(match);
     });
   });
+};
+
+UserSchema.methods.sessionUser = function sessionUser() {
+  return { id: this._id, username: this.username, email: this.email };
 };
 
 export default mongoose.model('User', UserSchema);

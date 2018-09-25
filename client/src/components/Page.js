@@ -9,7 +9,8 @@ class Page extends Component {
     super();
     this.state = {
       ready: false,
-      signedIn: false
+      signedIn: false,
+      cart: []
     };
     this.signOut = this.signOut.bind(this);
     this.signIn = this.signIn.bind(this);
@@ -17,14 +18,18 @@ class Page extends Component {
   }
 
   componentDidMount() {
-    fetch('/authentification', {method: 'GET'})
+    fetch('/authentification', { method: 'GET', credentials: 'include' }, )
     .then(res => res.json()).then((res) => {
         this.setState({ ready: true, signedIn: res.signedIn });
     });
+      fetch('/cart/getItems', { method: 'GET', credentials: 'include' }, )
+      .then(res => res.json()).then((res) => {
+          this.setState({ cart: res.cart });
+      });
   }
 
   signOut() {
-    fetch('/authentification/signout', {method: 'GET'})
+    fetch('/authentification/signout', { method: 'GET', credentials: 'include' })
     .then(res => res.json()).then((res) => {
         if (res.success) {
           this.setState({ signedIn: false });
@@ -40,14 +45,21 @@ class Page extends Component {
     this.setState({ signedIn: true });
   }
 
-  addToCart(itemId) {
-    alert('added');
+  addToCart(item) {
+    fetch('/cart/addItem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ item })})
+    .then(res => res.json()).then((res) => {
+        this.setState({ cart: res.items });
+    });
   }
 
   render() {
     return (
       <div>
-        <Navbar ready={this.state.ready} signedIn={this.state.signedIn} handleSignOut={this.signOut}/>
+        <Navbar ready={this.state.ready} signedIn={this.state.signedIn} handleSignOut={this.signOut} cart={this.state.cart}/>
         <div className="content-container">
           <Content signedIn={this.state.signedIn} handleSignIn={this.signIn} handleAddToCart={this.addToCart}/>
         </div>

@@ -35,11 +35,12 @@ async function signin(req, res) {
     if (!user.isVerified)
       return res.json({ success: false, toVerify: true, message: 'Your account has not been verified.' });
 
-    req.session.user = user;
+    req.session.user = user.sessionUser();
     if (req.body.keepMeSignedIn)
       req.session.cookie.expires = false;
     else
       req.session.cookie.maxAge = 60 * 60 * 1000;
+
     res.json({ success: true });
   } catch (err) {
     handleError(res, err);
