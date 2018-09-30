@@ -1,0 +1,20 @@
+.number-found {
+  font-weight: lighter;
+  color: #999;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.search-text {
+  font-weight: bold;
+}
+
+.header-search {
+  border-top: 0.5px solid #ccc;
+  border-bottom: 0.5px solid #ccc;
+  background-color: #f8f8f8;
+}
+
+.jumbotron-filters {
+  border-bottom: 0.5px solid #ccc;
+}

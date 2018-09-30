@@ -7,6 +7,8 @@ import Resend from './Resend'
 import SendReset from './SendReset'
 import ResetPassword from './ResetPassword'
 import Confirmation from './Confirmation'
+import Search from './Search'
+import ItemView from './ItemView'
 import NotFound from './NotFound'
 
 class Content extends Component {
@@ -16,6 +18,8 @@ class Content extends Component {
       <main>
         <Switch>
           <Route exact path='/' render={(props) => (<Home {...props} signedIn={this.props.signedIn} handleAddToCart={this.props.handleAddToCart}/>)} />
+          <Route exact path='/search/:level/:value/:text?' render={(props) => (<Search {...props} handleAddToCart={this.props.handleAddToCart}/>)} />
+          <Route exact path='/item/:id' component={ItemView} />
           <Route exact path='/signin' render={(props) => (<Signin {...props} signedIn={this.props.signedIn} handleSignIn={this.props.handleSignIn} />)} />
           <Route exact path='/signup' component={Signup}/>
           <Route exact path='/resend' component={Resend}/>
@@ -29,4 +33,4 @@ class Content extends Component {
   }
 }
 
-export default Content
+export default Content;

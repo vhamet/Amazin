@@ -14,6 +14,4 @@ const ItemSchema = new Schema({
 }, { timestamps: true });
 ItemSchema.plugin(random);
 
-//RandomItem = mongoose.model('RandomItem', ItemSchema);
-
 export default mongoose.model('Item', ItemSchema);

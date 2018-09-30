@@ -21,14 +21,15 @@ class ItemBox extends Component {
 
   render() {
     if (this.props.item.name) {
-      const itemBoxClass = "item-box" + (this.state.isHovered ? " shadow p-3 mb-5 bg-white rounded item-box-hovered" : "");
+      const url = '/item/' + this.props.item._id;
+      const itemBoxClass = 'item-box' + (this.state.isHovered ? ' shadow p-3 mb-5 bg-white rounded item-box-hovered' : '');
       return (
         <div className={itemBoxClass} onMouseEnter={this.handleHover} onMouseLeave={this.handleHover}>
-          <div className="divImg"><Link to=""><img className="mx-auto d-block" src={this.props.item.imgUrl} /></Link></div>
-          <div className="divName"><Link to="">{this.props.item.name}</Link></div>
+          <div className="divImg"><Link to={url}><img className="mx-auto d-block" src={this.props.item.imgUrl} /></Link></div>
+          <div className="divName"><Link to={url}>{this.props.item.name}</Link></div>
           <div className="divPrice">${this.props.item.price}</div>
           <div className="divCart">
-            <button className="btn btn-primary border border-left-0" onClick={() => this.props.handleAddToCart(this.props.item)}>
+            <button className="btn btn-info border border-left-0" onClick={() => this.props.handleAddToCart(this.props.item)}>
               <i className="fas fa-cart-arrow-down"></i> Add to cart
             </button>
           </div>

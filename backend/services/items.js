@@ -9,6 +9,26 @@ function getRandoms(filter) {
   });
 }
 
+function getItems(filter) {
+  return new Promise((resolve, reject) => {
+    Item.find(filter, (err, user) => {
+      if (err) reject(err);
+      resolve(user);
+    });
+  });
+}
+
+function getItem(filter) {
+  return new Promise((resolve, reject) => {
+    Item.findOne(filter, (err, user) => {
+      if (err) reject(err);
+      resolve(user);
+    });
+  });
+}
+
 module.exports = {
   getRandoms,
+  getItems,
+  getItem,
 };

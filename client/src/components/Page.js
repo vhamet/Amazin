@@ -22,10 +22,10 @@ class Page extends Component {
     .then(res => res.json()).then((res) => {
         this.setState({ ready: true, signedIn: res.signedIn });
     });
-      fetch('/cart/getItems', { method: 'GET', credentials: 'include' }, )
-      .then(res => res.json()).then((res) => {
-          this.setState({ cart: res.cart });
-      });
+    fetch('/cart/getItems', { method: 'GET', credentials: 'include' }, )
+    .then(res => res.json()).then((res) => {
+        this.setState({ cart: res.cart });
+    });
   }
 
   signOut() {
@@ -59,9 +59,9 @@ class Page extends Component {
   render() {
     return (
       <div>
-        <Navbar ready={this.state.ready} signedIn={this.state.signedIn} handleSignOut={this.signOut} cart={this.state.cart}/>
+        <Navbar ready={this.state.ready} signedIn={this.state.signedIn} handleSignOut={this.signOut} cart={this.state.cart} />
         <div className="content-container">
-          <Content signedIn={this.state.signedIn} handleSignIn={this.signIn} handleAddToCart={this.addToCart}/>
+          <Content signedIn={this.state.signedIn} handleSignIn={this.signIn} handleAddToCart={this.addToCart} />
         </div>
         <Footer />
       </div>

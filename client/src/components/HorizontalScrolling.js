@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import ItemBox from './ItemBox';
 import { Link } from 'react-router-dom';
+import ItemBox from './ItemBox';
 
 import '../style/horizontalScrolling.css';
 
